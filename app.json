@@ -1,0 +1,30 @@
+{
+  "expo": {
+    "name": "election-pulse",
+    "slug": "election-pulse",
+    "scheme": "electionpulse",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/Designer.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/Designer.png",
+      "resizeMode": "cover",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/Designer.png",
+        "backgroundColor": "#ffffff"
+      }
+    },
+    "web": {
+      "favicon": "./assets/Designer.png"
+    },
+    "plugins": ["expo-router"]
+  }
+}
