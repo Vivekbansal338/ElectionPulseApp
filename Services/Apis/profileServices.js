@@ -1,4 +1,5 @@
-const url = "http://192.168.24.96:3000/collector/api/v1/employee";
+import { ipUrl } from "./index";
+const url = `${ipUrl}/collector/api/v1/employee`;
 
 export const getEmployeeProfile = async (token) => {
   const response = await fetch(`${url}/profile`, {

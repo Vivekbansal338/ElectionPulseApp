@@ -1,4 +1,5 @@
-const url = "http://192.168.24.96:3000/collector/api/v1/vote";
+import { ipUrl } from "./index";
+const url = `${ipUrl}/collector/api/v1/vote`;
 
 export const castVote = async (token, data) => {
   console.log("vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv");

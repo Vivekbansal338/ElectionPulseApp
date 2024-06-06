@@ -43,9 +43,9 @@ const AuthSlice = createSlice({
       state.token = null;
       state.userId = null;
       state.userinitaldata = null;
-      AsyncStorage.removeItem("userId");
-      AsyncStorage.removeItem("userinitaldata");
-      AsyncStorage.removeItem("token");
+      // AsyncStorage.removeItem("userId");
+      // AsyncStorage.removeItem("userinitaldata");
+      // AsyncStorage.removeItem("token");
     },
   },
 });

@@ -1,10 +1,14 @@
 import { Tabs } from "expo-router";
+import { View, Text } from "react-native";
 import React from "react";
-import Header from "../../components/headers/Header";
-import HomeHeader from "../../components/headers/HomeHeader";
 import Animatedicon from "../../components/common/Animatedicon";
+import { colors } from "../../utils/colorData";
+import { useSelector } from "react-redux";
 
 const _layout = () => {
+  const votes = useSelector((state) => state.VoteCart);
+  const count =
+    votes.votesWithLocation.length + votes.votesWithoutLocation.length;
   return (
     <Tabs
       screenOptions={{
@@ -41,12 +45,33 @@ const _layout = () => {
           headerShown: false,
           // header: () => <Header />,
           tabBarIcon: ({ focused }) => (
-            <Animatedicon
-              source={require("../../assets/icons/vote-elections.json")}
-              width={24}
-              height={24}
-              autoPlay={focused}
-            />
+            <View>
+              <Animatedicon
+                source={require("../../assets/icons/vote-elections.json")}
+                width={24}
+                height={24}
+                autoPlay={focused}
+              />
+              {count > 0 && (
+                <View
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    right: -11,
+                    width: 16,
+                    height: 16,
+                    backgroundColor: colors.primary,
+                    borderRadius: 8,
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <Text style={{ color: "white", fontSize: 10 }}>
+                    {count > 9 ? "9+" : count}
+                  </Text>
+                </View>
+              )}
+            </View>
           ),
         }}
       />

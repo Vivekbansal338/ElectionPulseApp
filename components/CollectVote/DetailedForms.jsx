@@ -17,7 +17,7 @@ import { gender, religion, category } from "../../utils/HelperData.js";
 import VoteSubmitModal from "./VoteSubmitModal";
 import Toast from "react-native-toast-message";
 
-const DetailedVote = ({
+const DetailedForm = ({
   activeTab,
   setActiveTab,
   handleNextPrevious,
@@ -42,6 +42,20 @@ const DetailedVote = ({
   const [newAchievement, setNewAchievement] = useState("");
   const [newIssue, setNewIssue] = useState("");
   const [otherData, setOtherData] = useState({});
+
+  const nextPreviousClick = (type) => {
+    if (activeTab === "Voter Data") {
+      if (voterData.age !== "" && voterData.age < 18) {
+        Toast.show({
+          text1: "Invalid Age",
+          text2: "Age should be greater than 18.",
+          type: "error",
+        });
+        return;
+      }
+    }
+    handleNextPrevious(type);
+  };
 
   const checkLocationPermissionAndStatus = async () => {
     try {
@@ -77,9 +91,14 @@ const DetailedVote = ({
 
   const handleAddAchievement = () => {
     if (newAchievement.trim() !== "") {
+      const formattedAchievement = newAchievement
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, " ")
+        .replace(/[^\w\s]/gi, "");
       setAchievements((prevAchievements) => [
         ...prevAchievements,
-        newAchievement,
+        formattedAchievement,
       ]);
       setNewAchievement("");
     }
@@ -87,7 +106,12 @@ const DetailedVote = ({
 
   const handleAddIssue = () => {
     if (newIssue.trim() !== "") {
-      setIssues((prevIssues) => [...prevIssues, newIssue]);
+      const formattedIssue = newIssue
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, " ")
+        .replace(/[^\w\s]/gi, "");
+      setIssues((prevIssues) => [...prevIssues, formattedIssue]);
       setNewIssue("");
     }
   };
@@ -97,7 +121,7 @@ const DetailedVote = ({
       voterData: {
         ...voterData,
         name: voterData.name === "" ? "Unknown" : voterData.name,
-        age: voterData.age === null ? 18 : voterData.age,
+        age: voterData.age === "" ? 18 : voterData.age,
         caste: voterData.caste === "" ? "Unknown" : voterData.caste,
       },
       achievements: achievements,
@@ -126,7 +150,9 @@ const DetailedVote = ({
         style={styles.input}
         placeholder="Age(Optional)"
         value={voterData.age}
-        onChangeText={(value) => handleVoterDataChange(value, "age")}
+        onChangeText={(value) => {
+          handleVoterDataChange(value, "age");
+        }}
         keyboardType="numeric"
         placeholderTextColor="#ccc"
         cursorColor={colors.primary}
@@ -191,11 +217,20 @@ const DetailedVote = ({
   const renderAchievementsList = () => (
     <View style={styles.formContainer}>
       <FlatList
+        horizontal={true}
         data={achievements}
         renderItem={({ item }) => <Text style={styles.listItem}>{item}</Text>}
         keyExtractor={(item, index) => index.toString()}
         ListFooterComponent={
-          <View style={styles.inputContainer}>
+          <View
+            style={[
+              styles.inputContainer,
+              {
+                marginTop: 50,
+                alignItems: "center",
+              },
+            ]}
+          >
             <TextInput
               style={styles.input}
               placeholder="Add Achievement"
@@ -206,7 +241,7 @@ const DetailedVote = ({
               style={styles.addButton}
               onPress={handleAddAchievement}
             >
-              <Ionicons name="add-circle" size={24} color={colors.primary} />
+              <Ionicons name="add-circle" size={32} color={colors.primary} />
             </TouchableOpacity>
           </View>
         }
@@ -261,7 +296,7 @@ const DetailedVote = ({
                 marginRight: "auto",
               },
             ]}
-            onPress={() => handleNextPrevious("previous")}
+            onPress={() => nextPreviousClick("previous")}
           >
             <Ionicons
               name="arrow-back-outline"
@@ -280,7 +315,7 @@ const DetailedVote = ({
                 marginLeft: "auto",
               },
             ]}
-            onPress={() => handleNextPrevious("next")}
+            onPress={() => nextPreviousClick("next")}
           >
             <Text style={styles.activetypeText}>Next</Text>
             <Ionicons
@@ -303,7 +338,7 @@ const DetailedVote = ({
   );
 };
 
-export default DetailedVote;
+export default DetailedForm;
 
 const styles = StyleSheet.create({
   container: {
@@ -342,6 +377,7 @@ const styles = StyleSheet.create({
   },
   addButton: {
     marginLeft: 8,
+    marginBottom: 15,
   },
   listItem: {
     fontSize: 16,
