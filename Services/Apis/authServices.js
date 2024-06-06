@@ -1,4 +1,5 @@
-const url = "http://192.168.24.96:3000/collector/api/v1/auth";
+import { ipUrl } from "./index";
+const url = `${ipUrl}/collector/api/v1/auth`;
 
 export const login = async (data) => {
   console.log(data);

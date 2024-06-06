@@ -101,7 +101,7 @@ const VoteSubmitModal = ({
         ...otherData,
       };
     }
-    console.log(formdata);
+    console.log("---", formdata);
     mutate(
       { data: formdata },
       {
