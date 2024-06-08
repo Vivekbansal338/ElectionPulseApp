@@ -5,12 +5,17 @@ import {
   View,
   TextInput,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import { colors } from "../../utils/colorData";
 import {
   useSendVerifyOTP,
   useSubmitVerifyOTP,
 } from "../../Services/Query/authQuery";
+import {
+  validateSendVerifyFormData,
+  validateVerifyOTPFormData,
+} from "../../utils/FormValidators";
 import Toast from "react-native-toast-message";
 import { router } from "expo-router";
 
@@ -35,67 +40,72 @@ const Verification = () => {
   const [otpSent, setOtpSent] = useState(false);
 
   const handleSendOtp = () => {
-    if (mobileNumber.length !== 10) {
-      Toast.show({
-        type: "error",
-        text1: "Invalid mobile number",
-      });
-      return;
-    }
-    const formdata = {
+    let formdata = {
       mobileNumber,
     };
+    const result = validateSendVerifyFormData(formdata);
+    if (!result.valid) {
+      return Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: result.message,
+      });
+    }
+    formdata = result.data;
+
     sendOtpMutate(
       { data: formdata },
       {
-        onSuccess: (data) => {
-          if (data.success === true) {
-            setOtpSent(true);
-            Toast.show({
-              type: "success",
-              text1: "OTP sent successfully.",
-              text2: "Check your mobile and email",
-            });
-          }
+        onSuccess: () => {
+          setOtpSent(true);
+          Toast.show({
+            type: "success",
+            text1: "OTP sent successfully.",
+            text2: "Check your mobile and email",
+          });
         },
-      },
-      {
         onError: (error) => {
-          console.error(error);
+          Toast.show({
+            type: "error",
+            text1: "Error",
+            text2: error.message,
+          });
         },
       }
     );
   };
 
   const handleSubmit = () => {
-    if (mobileOtp.length !== 6 || emailOtp.length !== 6) {
-      Toast.show({
-        type: "error",
-        text1: "Invalid OTP",
-      });
-      return;
-    }
-    const formdata = {
+    let formdata = {
       mobileOTP: mobileOtp,
       emailOTP: emailOtp,
     };
+    const result = validateVerifyOTPFormData(formdata);
+    if (!result.valid) {
+      return Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: result.message,
+      });
+    }
+    formdata = result.data;
 
     submitOtpMutate(
       { data: formdata },
       {
         onSuccess: (data) => {
-          if (data.success === true) {
-            Toast.show({
-              type: "success",
-              text1: "Verification successful",
-            });
-            router.replace("/(tabs)/home");
-          }
+          Toast.show({
+            type: "success",
+            text1: "Verification successful",
+          });
+          router.replace("/(tabs)/home");
         },
-      },
-      {
         onError: (error) => {
-          console.error(error);
+          Toast.show({
+            type: "error",
+            text1: "Error",
+            text2: error.message,
+          });
         },
       }
     );
@@ -121,8 +131,16 @@ const Verification = () => {
               placeholderTextColor="#ccc"
               cursorColor={colors.primary}
             />
-            <TouchableOpacity style={styles.button} onPress={handleSendOtp}>
-              <Text style={styles.buttonText}>Send OTP</Text>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={handleSendOtp}
+              disabled={isSendOtpPending}
+            >
+              {isSendOtpPending ? (
+                <ActivityIndicator color="white" />
+              ) : (
+                <Text style={styles.buttonText}>Send OTP</Text>
+              )}
             </TouchableOpacity>
           </>
         ) : (
@@ -145,8 +163,16 @@ const Verification = () => {
               placeholderTextColor="#ccc"
               cursorColor={colors.primary}
             />
-            <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-              <Text style={styles.buttonText}>Submit</Text>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={handleSubmit}
+              disabled={isSumbitOtpPending}
+            >
+              {isSumbitOtpPending ? (
+                <ActivityIndicator color="white" />
+              ) : (
+                <Text style={styles.buttonText}>Submit</Text>
+              )}
             </TouchableOpacity>
           </>
         )}

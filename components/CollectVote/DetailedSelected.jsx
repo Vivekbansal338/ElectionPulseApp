@@ -4,7 +4,7 @@ import DetailedTabs from "./DetailedTabs";
 import React, { useState } from "react";
 import { detailedTabs as tabs } from "../../utils/headerData";
 
-const DetailedSelected = ({ selectedParty, setSelectedParty }) => {
+const DetailedSelected = ({ selectedParty, setSelectedParty, tags }) => {
   const [activeTab, setActiveTab] = useState(tabs[0].name);
 
   const handleNextPrevious = (type) => {
@@ -37,6 +37,7 @@ const DetailedSelected = ({ selectedParty, setSelectedParty }) => {
         selectedParty={selectedParty}
         setSelectedParty={setSelectedParty}
         handleNextPrevious={handleNextPrevious}
+        tags={tags}
       />
     </View>
   );

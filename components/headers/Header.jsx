@@ -6,11 +6,42 @@ import * as Network from "expo-network";
 import * as Location from "expo-location";
 import { useDispatch } from "react-redux";
 import { AddLocation } from "../../Store/Locations";
+import {
+  useUnstableGlobalHref,
+  usePathname,
+  useGlobalSearchParams,
+  useLocalSearchParams,
+  useSegments,
+} from "expo-router";
 
 const Header = () => {
   const [isNetworkAvailable, setIsNetworkAvailable] = useState(true);
   const [isLocationAvailable, setIsLocationAvailable] = useState(false);
   const dispatch = useDispatch();
+
+  const globalHref = useUnstableGlobalHref();
+  const pathname = usePathname();
+  const globalSearchParams = useGlobalSearchParams();
+  const localSearchParams = useLocalSearchParams();
+  const segments = useSegments();
+
+  console.log("globalHref", globalHref); //globalHref /vote/66618aba3a758a73632a6c1d?status=Ongoing
+  console.log("pathname", pathname); //pathname /vote/66618aba3a758a73632a6c1d
+  console.log("globalSearchParams", globalSearchParams); //globalSearchParams {"id": "66618aba3a758a73632a6c1d", "status": "Ongoing"}
+  console.log("localSearchParams", localSearchParams); //localSearchParams {"id": "66618aba3a758a73632a6c1d", "status": "Ongoing"}
+  console.log("segments", segments); //segments ["vote", "[id]"]
+
+  // check if current route is /vote/:id
+  const isVoteById = pathname.includes("/vote/");
+  let electionSeatId = "";
+  let electionSeatStatus = "";
+  if (isVoteById) {
+    electionSeatStatus = localSearchParams.status;
+    electionSeatId = localSearchParams.id;
+  }
+  console.log("isVoteById", isVoteById, electionSeatId, electionSeatStatus);
+
+  console.log("==============================================================");
 
   useEffect(() => {
     const checkNetworkStatus = async () => {
@@ -51,7 +82,7 @@ const Header = () => {
 
     checkNetworkStatus();
     checkLocationStatus();
-    const intervalId = setInterval(getLocationAndStore, 60000 * 10);
+    const intervalId = setInterval(getLocationAndStore, 60000 * 10); // 10 minutes
 
     return () => clearInterval(intervalId);
   }, []);

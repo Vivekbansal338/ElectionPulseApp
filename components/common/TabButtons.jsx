@@ -2,9 +2,8 @@ import React, { useState } from "react";
 import { StyleSheet, View, TouchableOpacity, Text } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { colors, color2 } from "../../utils/colorData";
-import { infoTabs as tabs } from "../../utils/headerData";
 
-const InfoTabs = ({ activeTab, setActiveTab }) => {
+const TabButtons = ({ activeTab, setActiveTab, tabs, hidden = false }) => {
   const handleSelect = (tab) => {
     setActiveTab(tab.name);
   };
@@ -21,6 +20,7 @@ const InfoTabs = ({ activeTab, setActiveTab }) => {
           onPress={() => handleSelect(tab)}
         >
           <Ionicons name={tab.icon} size={24} color={tab.color} />
+
           {activeTab === tab.name && (
             <Text style={styles.activetypeText}>{tab.name}</Text>
           )}
@@ -30,7 +30,7 @@ const InfoTabs = ({ activeTab, setActiveTab }) => {
   );
 };
 
-export default InfoTabs;
+export default TabButtons;
 
 const styles = StyleSheet.create({
   toptypecontainer: {
@@ -40,6 +40,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     overflow: "hidden",
+    marginBottom: 16,
   },
   typeButton: {
     height: "100%",

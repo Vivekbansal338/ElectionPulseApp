@@ -7,19 +7,20 @@ import {
   TextInput,
   TouchableOpacity,
   RefreshControl,
+  ActivityIndicator,
 } from "react-native";
 import { Image } from "expo-image";
-import Divider from "../../components/common/Divider";
 import { colors } from "../../utils/colorData";
 import { useLogin } from "../../Services/Query/authQuery";
 import { LoginRed } from "../../Store/Auth";
 import { useDispatch } from "react-redux";
 import { router } from "expo-router";
-
-const blurhash =
-  "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
+import Toast from "react-native-toast-message";
+import { blurhash } from "../../utils/Constants";
+import { validateLoginFormData } from "../../utils/FormValidators";
 
 const Login = () => {
+  const dispatch = useDispatch();
   const {
     isPending: isLoginPending,
     mutate: loginMutate,
@@ -27,7 +28,6 @@ const Login = () => {
     error: loginError,
   } = useLogin();
 
-  const dispatch = useDispatch();
   const [email, setEmail] = useState("juliette.brovfvfvfvwn@example.com");
   const [password, setPassword] = useState("Vivek123@");
   const [refreshing, setRefreshing] = useState(false);
@@ -41,40 +41,55 @@ const Login = () => {
   }, []);
 
   const handleLogin = () => {
-    const formdata = {
+    let formdata = {
       email,
       password,
       role: "Collector",
     };
+    const result = validateLoginFormData(formdata);
+    if (!result.valid) {
+      return Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: result.message,
+      });
+    } else {
+      formdata = result.data;
+    }
+
     loginMutate(
       { data: formdata },
       {
         onSuccess: (data) => {
-          console.log("login data", data);
-          if (data.success === true) {
-            if (data.data.verification === 0) {
-              dispatch(
-                LoginRed({
-                  token: data.data.token,
-                  userId: data.data.user.id,
-                })
-              );
-              router.replace("/(auth)/verify");
-            } else {
-              dispatch(
-                LoginRed({
-                  token: data.data.token,
-                  userId: data.data.user.id,
-                })
-              );
-              router.replace("/(tabs)/home");
-            }
+          Toast.show({
+            type: "success",
+            text1: "Success",
+            text2: "Login successful",
+          });
+          if (data.verification === 0) {
+            dispatch(
+              LoginRed({
+                token: data.token,
+                userId: data.user.id,
+              })
+            );
+            router.replace("/(auth)/verify");
+          } else {
+            dispatch(
+              LoginRed({
+                token: data.token,
+                userId: data.user.id,
+              })
+            );
+            router.replace("/(tabs)/home");
           }
         },
-      },
-      {
         onError: (error) => {
-          console.log("error", formdata, error);
+          Toast.show({
+            type: "error",
+            text1: "Error",
+            text2: error.message,
+          });
         },
       }
     );
@@ -122,8 +137,16 @@ const Login = () => {
           cursorColor={colors.primary}
         />
 
-        <TouchableOpacity style={styles.button} onPress={handleLogin}>
-          <Text style={styles.buttonText}>Login</Text>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={handleLogin}
+          disabled={isLoginPending}
+        >
+          {isLoginPending ? (
+            <ActivityIndicator size="small" color="white" />
+          ) : (
+            <Text style={styles.buttonText}>Login</Text>
+          )}
         </TouchableOpacity>
 
         <TouchableOpacity

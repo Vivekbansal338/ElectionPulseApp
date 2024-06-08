@@ -6,11 +6,13 @@ import { useLocalSearchParams } from "expo-router";
 import { useCastVote } from "../../Services/Query/voteQuery";
 import * as Location from "expo-location";
 import Toast from "react-native-toast-message";
+import { getRandomLocationWithinRegion } from "../../utils/HelperFunctions";
 import {
   AddVoteWithLocation,
   AddVoteWithoutLocation,
 } from "../../Store/VoteCart";
 import { SetLastLocationCoords } from "../../Store/Locations";
+import { useElectionSeatInfoById } from "../../Services/Query/electionSeatQuery";
 import { useDispatch } from "react-redux";
 import Animatedicon from "../common/Animatedicon";
 
@@ -24,6 +26,7 @@ const VoteSubmitModal = ({
 }) => {
   const dispatch = useDispatch();
   const { id } = useLocalSearchParams();
+  const { data: infoData } = useElectionSeatInfoById(id);
   const myId = useSelector((state) => state.Auth.userId);
   const [isLocationPending, setIsLocationPending] = useState(false);
   const [isLocationError, setLocationError] = useState(false);
@@ -80,7 +83,11 @@ const VoteSubmitModal = ({
     setVoteSuccess(false);
     let location = null;
     if (time === "current") {
-      location = await getLocationAndStore();
+      // location = await getLocationAndStore();
+      location = getRandomLocationWithinRegion(
+        infoData?.data?.seat?.boundary?.coordinates,
+        infoData?.data?.seat?.boundary?.type
+      );
       if (!location) {
         setLocationError(true);
         return;
@@ -115,9 +122,6 @@ const VoteSubmitModal = ({
           setVoteSuccess(true);
           setModalVisible(false);
         },
-      },
-      {
-        onError: () => {},
       }
     );
   };
@@ -157,8 +161,8 @@ const VoteSubmitModal = ({
     setVoteSuccess(true);
   };
 
-  const handleUseLastLocation = () => {
-    handleSubmit(partyData, type, "past");
+  const handleUseLastLocation = async () => {
+    await handleSubmit(partyData, type, "past");
   };
 
   return (

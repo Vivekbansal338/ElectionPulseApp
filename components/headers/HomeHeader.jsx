@@ -6,9 +6,9 @@ import {
   TouchableOpacity,
   Text,
 } from "react-native";
+import { getHomeHeaderData } from "../../utils/headerData";
 import { colors } from "../../utils/colorData";
 import { Ionicons } from "@expo/vector-icons";
-import Animatedicon from "../common/Animatedicon";
 
 const HomeHeader = ({ activeTab, setActiveTab, scrollViewRef }) => {
   const handleTabPress = (tab) => {
@@ -21,19 +21,6 @@ const HomeHeader = ({ activeTab, setActiveTab, scrollViewRef }) => {
       scrollViewRef.current?.scrollTo({ x: 200, animated: true });
     }
     setActiveTab(tab);
-  };
-
-  const getStatusData = (status) => {
-    switch (status) {
-      case "Upcoming":
-        return { color: "#17A2B8", icon: "calendar-outline" };
-      case "Ongoing":
-        return { color: "#28A745", icon: "refresh-circle-outline" };
-      case "Completed":
-        return { color: "#6C757D", icon: "checkmark-circle-outline" };
-      default:
-        return { color: "#333", icon: "help-circle-outline" };
-    }
   };
 
   return (
@@ -52,9 +39,9 @@ const HomeHeader = ({ activeTab, setActiveTab, scrollViewRef }) => {
           onPress={() => handleTabPress("Upcoming")}
         >
           <Ionicons
-            name={getStatusData("Upcoming").icon}
+            name={getHomeHeaderData("Upcoming").icon}
             size={24}
-            color={getStatusData("Upcoming").color}
+            color={getHomeHeaderData("Upcoming").color}
           />
           {/* <Animatedicon
             source={require("../../assets/icons/clock.json")}
@@ -79,9 +66,9 @@ const HomeHeader = ({ activeTab, setActiveTab, scrollViewRef }) => {
           onPress={() => handleTabPress("Ongoing")}
         >
           <Ionicons
-            name={getStatusData("Ongoing").icon}
+            name={getHomeHeaderData("Ongoing").icon}
             size={24}
-            color={getStatusData("Ongoing").color}
+            color={getHomeHeaderData("Ongoing").color}
           />
           {/* <Animatedicon
             source={require("../../assets/icons/arrowrounded.json")}
@@ -106,9 +93,9 @@ const HomeHeader = ({ activeTab, setActiveTab, scrollViewRef }) => {
           onPress={() => handleTabPress("Completed")}
         >
           <Ionicons
-            name={getStatusData("Completed").icon}
+            name={getHomeHeaderData("Completed").icon}
             size={24}
-            color={getStatusData("Completed").color}
+            color={getHomeHeaderData("Completed").color}
           />
           {/* <Animatedicon
             source={require("../../assets/icons/checked.json")}

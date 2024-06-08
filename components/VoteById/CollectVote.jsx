@@ -66,7 +66,7 @@ const CollectVote = () => {
   };
 
   const handleSelect = (party) => {
-    if (selectedParty === party) {
+    if (selectedParty === party || activeTab === tabs[1]) {
       setSelectedParty(null);
       return;
     }
@@ -91,6 +91,7 @@ const CollectVote = () => {
   };
 
   if (isPending) return <Text>Loading...</Text>;
+  console.log("data---------------==========", data?.data?.seat);
 
   return (
     <ScrollView
@@ -154,6 +155,7 @@ const CollectVote = () => {
         <DetailedSelected
           selectedParty={selectedParty}
           setSelectedParty={setSelectedParty}
+          tags={data?.data?.tags || []}
         />
       )}
 

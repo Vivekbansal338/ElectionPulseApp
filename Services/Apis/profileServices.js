@@ -9,6 +9,12 @@ export const getEmployeeProfile = async (token) => {
       Authorization: `Bearer ${token}`,
     },
   });
+  if (!response.ok) {
+    throw new Error("Something went wrong! Please try again later.");
+  }
   const result = await response.json();
+  if (result.success === false) {
+    throw new Error("Something went wrong! Please try again later.");
+  }
   return result;
 };

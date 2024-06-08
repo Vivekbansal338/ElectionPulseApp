@@ -2,6 +2,7 @@ import {
   getElectionSeats,
   getElectionSeatInfoById,
   getElectionSeatStatsById,
+  getElectionSeatVoteLocationsById,
 } from "../../Services/Apis/electionSeatSerices.js";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { useSelector } from "react-redux";
@@ -23,8 +24,6 @@ export const useElectionSeats = (status) => {
     getNextPageParam: (lastPage) =>
       lastPage.hasNextPage ? lastPage.page + 1 : undefined,
   });
-
-  console.log("----------------------", data);
 
   return {
     data,
@@ -57,6 +56,20 @@ export const useElectionSeatStatsById = (id) => {
   const { data, isError, error, isPending } = useQuery({
     queryKey: ["ElectionSeatStatsById", id],
     queryFn: () => getElectionSeatStatsById(token, id),
+  });
+  return {
+    data,
+    isError,
+    error,
+    isPending,
+  };
+};
+
+export const useElectionSeatVoteLocationsById = (id) => {
+  const token = useSelector((state) => state.Auth.token);
+  const { data, isError, error, isPending } = useQuery({
+    queryKey: ["ElectionSeatVoteLocationsById", id],
+    queryFn: () => getElectionSeatVoteLocationsById(token, id),
   });
   return {
     data,
