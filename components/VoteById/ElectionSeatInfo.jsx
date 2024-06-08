@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View, ScrollView, FlatList } from "react-native";
 import React, { useState, useEffect } from "react";
-import InfoTabs from "../CollectVoteInfo/InfoTabs";
+import TabButtons from "../common/TabButtons";
 import { infoTabs as tabs } from "../../utils/headerData";
 import { useLocalSearchParams } from "expo-router";
 import { useElectionSeatInfoById } from "../../Services/Query/electionSeatQuery";
@@ -8,6 +8,7 @@ import PartyCard from "../CollectVote/PartyCard";
 import EmployeeCardDetailed from "../CollectVoteInfo/EmployeeCardDetailed";
 import EmployeeCard from "../CollectVoteInfo/EmployeeCard";
 import SeatCard from "../CollectVoteInfo/SeatCard";
+import SeatMap from "./SeatMap";
 
 const ElectionSeatInfo = () => {
   const [activeTab, setActiveTab] = useState(tabs[0].name);
@@ -60,7 +61,13 @@ const ElectionSeatInfo = () => {
       }}
       showsVerticalScrollIndicator={false}
     >
-      {/* <InfoTabs activeTab={activeTab} setActiveTab={setActiveTab} /> */}
+      <TabButtons
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        tabs={tabs}
+      />
+      <SeatMap boundary={data?.data?.seat?.boundary} />
+      <SeatCard seat={seatData} />
       <View style={styles.content}>
         <FlatList
           data={partiesData}
@@ -102,7 +109,6 @@ const ElectionSeatInfo = () => {
           showsVerticalScrollIndicator={false}
         />
       </View>
-      <SeatCard seat={seatData} />
     </ScrollView>
   );
 };

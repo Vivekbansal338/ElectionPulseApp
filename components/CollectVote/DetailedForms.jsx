@@ -11,6 +11,9 @@ import { Ionicons } from "@expo/vector-icons";
 import { colors, color2 } from "../../utils/colorData";
 import { Picker } from "@react-native-picker/picker";
 import { useSelector } from "react-redux";
+import AchievementsList from "./DetailedComponents/AchievementsList.jsx";
+import IssuesList from "./DetailedComponents/IssuesList.jsx";
+import VoterDataForm from "./DetailedComponents/VoterDataForm.jsx";
 import { useLocalSearchParams } from "expo-router";
 import * as Location from "expo-location";
 import { gender, religion, category } from "../../utils/HelperData.js";
@@ -23,6 +26,7 @@ const DetailedForm = ({
   handleNextPrevious,
   selectedParty,
   setSelectedParty,
+  tags,
 }) => {
   const { id } = useLocalSearchParams();
   const myId = useSelector((state) => state.Auth.userId);
@@ -36,11 +40,8 @@ const DetailedForm = ({
     caste: "",
   });
   const [modalVisible, setModalVisible] = useState(false);
-
   const [achievements, setAchievements] = useState([]);
   const [issues, setIssues] = useState([]);
-  const [newAchievement, setNewAchievement] = useState("");
-  const [newIssue, setNewIssue] = useState("");
   const [otherData, setOtherData] = useState({});
 
   const nextPreviousClick = (type) => {
@@ -89,7 +90,7 @@ const DetailedForm = ({
     }));
   };
 
-  const handleAddAchievement = () => {
+  const handleAddAchievement = (newAchievement) => {
     if (newAchievement.trim() !== "") {
       const formattedAchievement = newAchievement
         .trim()
@@ -100,11 +101,10 @@ const DetailedForm = ({
         ...prevAchievements,
         formattedAchievement,
       ]);
-      setNewAchievement("");
     }
   };
 
-  const handleAddIssue = () => {
+  const handleAddIssue = (newIssue) => {
     if (newIssue.trim() !== "") {
       const formattedIssue = newIssue
         .trim()
@@ -112,11 +112,10 @@ const DetailedForm = ({
         .replace(/\s+/g, " ")
         .replace(/[^\w\s]/gi, "");
       setIssues((prevIssues) => [...prevIssues, formattedIssue]);
-      setNewIssue("");
     }
   };
 
-  const handleSubmit = async (party) => {
+  const handleSubmit = async () => {
     setOtherData({
       voterData: {
         ...voterData,
@@ -136,146 +135,10 @@ const DetailedForm = ({
     setVoterData({});
   };
 
-  const renderVoterDataForm = () => (
-    <View style={styles.formContainer}>
-      <TextInput
-        style={styles.input}
-        placeholder="Name(Optional)"
-        value={voterData.name}
-        onChangeText={(value) => handleVoterDataChange(value, "name")}
-        placeholderTextColor="#ccc"
-        cursorColor={colors.primary}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Age(Optional)"
-        value={voterData.age}
-        onChangeText={(value) => {
-          handleVoterDataChange(value, "age");
-        }}
-        keyboardType="numeric"
-        placeholderTextColor="#ccc"
-        cursorColor={colors.primary}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Caste(Optional)"
-        value={voterData.caste}
-        onChangeText={(value) => handleVoterDataChange(value, "caste")}
-        placeholderTextColor="#ccc"
-        cursorColor={colors.primary}
-      />
-      <View>
-        <Text style={{ marginLeft: 10, marginBottom: 5, color: "#ccc" }}>
-          Religion(Optional)
-        </Text>
-        <View style={styles.picker}>
-          <Picker
-            selectedValue={voterData.religion}
-            onValueChange={(value) => handleVoterDataChange(value, "religion")}
-          >
-            {religion.map((item) => (
-              <Picker.Item key={item} label={item} value={item} />
-            ))}
-          </Picker>
-        </View>
-      </View>
-      <View>
-        <Text style={{ marginLeft: 10, marginBottom: 5, color: "#ccc" }}>
-          Gender(Optional)
-        </Text>
-        <View style={styles.picker}>
-          <Picker
-            selectedValue={voterData.gender}
-            onValueChange={(value) => handleVoterDataChange(value, "gender")}
-          >
-            {gender.map((item) => (
-              <Picker.Item key={item} label={item} value={item} />
-            ))}
-          </Picker>
-        </View>
-      </View>
-
-      <View>
-        <Text style={{ marginLeft: 10, marginBottom: 5, color: "#ccc" }}>
-          Category(Optional)
-        </Text>
-        <View style={styles.picker}>
-          <Picker
-            selectedValue={voterData.category}
-            onValueChange={(value) => handleVoterDataChange(value, "category")}
-          >
-            {category.map((item) => (
-              <Picker.Item key={item} label={item} value={item} />
-            ))}
-          </Picker>
-        </View>
-      </View>
-    </View>
-  );
-
-  const renderAchievementsList = () => (
-    <View style={styles.formContainer}>
-      <FlatList
-        horizontal={true}
-        data={achievements}
-        renderItem={({ item }) => <Text style={styles.listItem}>{item}</Text>}
-        keyExtractor={(item, index) => index.toString()}
-        ListFooterComponent={
-          <View
-            style={[
-              styles.inputContainer,
-              {
-                marginTop: 50,
-                alignItems: "center",
-              },
-            ]}
-          >
-            <TextInput
-              style={styles.input}
-              placeholder="Add Achievement"
-              value={newAchievement}
-              onChangeText={setNewAchievement}
-            />
-            <TouchableOpacity
-              style={styles.addButton}
-              onPress={handleAddAchievement}
-            >
-              <Ionicons name="add-circle" size={32} color={colors.primary} />
-            </TouchableOpacity>
-          </View>
-        }
-      />
-    </View>
-  );
-
-  const renderIssuesList = () => (
-    <View style={styles.formContainer}>
-      <FlatList
-        data={issues}
-        renderItem={({ item }) => <Text style={styles.listItem}>{item}</Text>}
-        keyExtractor={(item, index) => index.toString()}
-        ListFooterComponent={
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={styles.input}
-              placeholder="Add Issue"
-              value={newIssue}
-              onChangeText={setNewIssue}
-            />
-            <TouchableOpacity style={styles.addButton} onPress={handleAddIssue}>
-              <Ionicons name="add-circle" size={24} color={colors.primary} />
-            </TouchableOpacity>
-          </View>
-        }
-      />
-    </View>
-  );
-
   const renderSubmitButton = () => (
     <TouchableOpacity
       style={styles.submitButton}
-      onPress={() => handleSubmit(selectedParty)}
+      onPress={() => handleSubmit()}
     >
       <Text style={styles.submitButtonText}>Submit</Text>
     </TouchableOpacity>
@@ -283,9 +146,29 @@ const DetailedForm = ({
 
   return (
     <View style={styles.container}>
-      {activeTab === "Voter Data" && renderVoterDataForm()}
-      {activeTab === "Achievements" && renderAchievementsList()}
-      {activeTab === "Issues" && renderIssuesList()}
+      {activeTab === "Voter Data" && (
+        <VoterDataForm
+          voterData={voterData}
+          setVoterData={setVoterData}
+          handleVoterDataChange={handleVoterDataChange}
+        />
+      )}
+      {activeTab === "Achievements" && (
+        <AchievementsList
+          achievements={achievements}
+          handleAddAchievement={handleAddAchievement}
+          setAchievements={setAchievements}
+          tags={tags}
+        />
+      )}
+      {activeTab === "Issues" && (
+        <IssuesList
+          issues={issues}
+          handleAddIssue={handleAddIssue}
+          setIssues={setIssues}
+          tags={tags}
+        />
+      )}
       {activeTab === "Submit" && renderSubmitButton()}
       <View style={styles.buttoncontainer}>
         {activeTab !== "Voter Data" && (
@@ -343,7 +226,6 @@ export default DetailedForm;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // minHeight: 300,
     backgroundColor: "white",
     borderRadius: 10,
     marginVertical: 10,

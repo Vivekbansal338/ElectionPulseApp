@@ -7,7 +7,10 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { colors } from "../../utils/colorData";
-// import { useSendForgotPasswordOTP } from "../../Services/Query/authQuery";
+import {
+  validateForgotPasswordFormData,
+  validateResetPasswordFormData,
+} from "../../utils/FormValidators";
 import Toast from "react-native-toast-message";
 
 const ForgotPassword = () => {
@@ -16,43 +19,36 @@ const ForgotPassword = () => {
   const [newPassword, setNewPassword] = useState("");
   const [otpSent, setOtpSent] = useState(false);
 
-  //   const {
-  //     isPending: isSendOtpPending,
-  //     mutate: sendOtpMutate,
-  //     isError: isSendOtpError,
-  //     error: sendOtpError,
-  //   } = useSendForgotPasswordOTP();
-
   const handleSendOtp = () => {
-    // Validate email format
-    // const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
-    // if (!emailRegex.test(email)) {
-    //   Toast.show({
-    //     type: "error",
-    //     text1: "Invalid email address",
-    //   });
-    //   return;
-    // }
-
-    // Simulate sending OTP
+    let formData = {
+      email,
+    };
+    const result = validateForgotPasswordFormData(formData);
+    if (!result.valid) {
+      return Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: result.message,
+      });
+    }
+    formData = result.data;
     setOtpSent(true);
   };
 
   const handleResetPassword = () => {
-    if (emailOtp.length !== 6 || newPassword.length < 6) {
-      Toast.show({
-        type: "error",
-        text1: "Invalid OTP or password",
-      });
-      return;
-    }
-    const formdata = {
+    let formdata = {
       emailOTP: emailOtp,
       newPassword,
     };
-
-    // Call the resetPassword mutation here
-    // ...
+    const result = validateResetPasswordFormData(formdata);
+    if (!result.valid) {
+      return Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: result.message,
+      });
+    }
+    formdata = result.data;
   };
 
   return (

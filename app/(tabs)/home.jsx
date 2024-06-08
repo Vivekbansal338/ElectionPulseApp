@@ -58,7 +58,7 @@ const home = () => {
   };
 
   const config = {
-    velocityThreshold: 0.3,
+    velocityThreshold: 0.4,
     directionalOffsetThreshold: 80,
   };
 

@@ -6,30 +6,10 @@ import {
   TouchableOpacity,
   Pressable,
 } from "react-native";
+import { getHomeHeaderData } from "../../utils/headerData";
 import { Ionicons } from "@expo/vector-icons";
 import { colors } from "../../utils/colorData";
 import { router } from "expo-router";
-const getStatusData = (status) => {
-  switch (status) {
-    case "Upcoming":
-      return {
-        color: colors.upcoming,
-        icon: "calendar-outline",
-      };
-    case "Ongoing":
-      return {
-        color: colors.ongoing,
-        icon: "refresh-circle-outline",
-      };
-    case "Completed":
-      return {
-        color: colors.completed,
-        icon: "checkmark-circle-outline",
-      };
-    default:
-      return { color: colors.primary, icon: "alert-circle-outline" };
-  }
-};
 
 const DateFormat = (date) => {
   const d = new Date(date);
@@ -37,11 +17,12 @@ const DateFormat = (date) => {
 };
 
 const ElectionCard = ({ election }) => {
-  const statusData = getStatusData(election.status);
+  const statusData = getHomeHeaderData(election.status);
 
   const handleNavigation = () => {
+    console.log("election", election);
     // if (election.status === "Ongoing") {
-    router.push(`/vote/${election._id}`);
+    router.push(`/vote/${election._id}?status=${election.status}`);
     // }
     return;
   };
@@ -54,8 +35,8 @@ const ElectionCard = ({ election }) => {
       style={[
         styles.container,
         {
-          shadowColor: getStatusData(election.status).color,
-          borderColor: getStatusData(election.status).color,
+          shadowColor: getHomeHeaderData(election.status).color,
+          borderColor: getHomeHeaderData(election.status).color,
         },
       ]}
     >
@@ -80,7 +61,7 @@ const ElectionCard = ({ election }) => {
             style={[
               styles.badge,
               {
-                backgroundColor: getStatusData(election.status).color,
+                backgroundColor: getHomeHeaderData(election.status).color,
               },
             ]}
           >
@@ -93,7 +74,7 @@ const ElectionCard = ({ election }) => {
             style={[
               styles.badge,
               {
-                backgroundColor: getStatusData(election.status).color,
+                backgroundColor: getHomeHeaderData(election.status).color,
               },
             ]}
           >
@@ -115,9 +96,9 @@ const ElectionCard = ({ election }) => {
           ]}
         >
           <Ionicons
-            name={getStatusData(election.status).icon}
+            name={getHomeHeaderData(election.status).icon}
             size={16}
-            color={getStatusData(election.status).color}
+            color={getHomeHeaderData(election.status).color}
           />
           <Text style={styles.badgeText}>{election.status}</Text>
         </View>
